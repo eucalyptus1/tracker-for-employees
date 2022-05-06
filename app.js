@@ -25,27 +25,36 @@ inquirer.prompt({
 
         if (answer.questions === 'View all departments') {
             showDepartments();
-        } else if (answer === "View all roles") {
+        } else if (answer.questions === "View all roles") {
             showRoles();
-        } else if (answer === "View all employees") {
+        } else if (answer.questions === "View all employees") {
             showEmployees();
-        } else if (answer === "Exit") {
+        } else if (answer.questions === "Add a department") {
+            addDepartment();
+        } else if (answer.questions === "Add a role") {
+            addRole();
+        } else if (answer.questions === "Add an employee") {
+            addEmployees();
+        } else if (answer.questions === "Update an employee role") {
+            updateEmployee();
+        } else if (answer.questions === "Exit") {
             connection.end();
         }
     })
 }
 
 showDepartments = () => {
-    // const sql = 'SELECT * FROM department';
     connection.query("SELECT * FROM department", (err, rows) => {
         if (err) throw err;
             console.table(rows);
             runApp();
 });
+}
 
 
 showRoles = () => {
-    connection.query(``, (err, rows) => {
+    connection.query(
+        `SELECT * FROM role`, (err, rows) => {
             if (err) throw err;
             console.table(rows);
             runApp();
@@ -53,12 +62,37 @@ showRoles = () => {
 }
 
 showEmployees = () => {
-        connection.query(, (err, rows) => {
+        connection.query(`SELECT * FROM employee`, (err, rows) => {
             if (err) throw err;
             console.table(rows);
-            promptUser();
+            runApp();
         });
-    }
 }
+
+addDepartment = () => {
+    inquirer.prompt([
+      {
+        type: 'input', 
+        name: 'addDept',
+        message: "Enter the name of the department you want to add",
+        validate: addDept => {
+          if (addDept) {
+              return true;
+          } else {
+              console.log('Field cannot be blank');
+              return false;
+          }
+        }
+      }
+    ])
+      .then(answer => {
+        connection.query(`INSERT INTO department (name) VALUES (?)`, 
+        answer.addDept, (err, rows) => {
+          if (err) throw err;
+          console.table(rows);
+          showDepartments();
+      });
+    });
+  }
 
 runApp();
