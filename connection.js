@@ -1,22 +1,21 @@
 const mysql = require('mysql2');
-const runApp = require('./app.js');
 // const path = require('path')
 // require('dotenv').config({ path: path.resolve(__dirname, './.env') })
 // require('dotenv').config();
 
-const empDB = mysql.createConnection(
+const connection = mysql.createConnection(
     {
       host: 'localhost',
+      port: 3306,
       user: 'root',
       password: 'Musqull1!',
       database: 'employee_tracker'
      
     })
-    empDB.connect(function(err) {
+    connection.connect(function(err) {
       if (err) throw err;
       console.log("Connected to database.");
-      runApp();
   });
   
 
-  module.exports = empDB;
+  module.exports = connection;

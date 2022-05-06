@@ -1,80 +1,64 @@
-const empDB = require('./connection.js');
+const connection = require('./connection.js');
+const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const showTable = require('console.table');
 
+
 function runApp() {
-return inquirer.prompt({
+inquirer.prompt({
 
             type: 'list',
-            name: 'options',
+            name: 'questions',
             message: 'What would you like to do?',
-            options: ['View all departments',
+            choices: ['View all departments',
                 'View all roles',
                 'View all employees',
                 'Add a department',
                 'Add a role',
                 'Add an employee',
                 'Update an employee role',
-                'Exit']
+                'Exit'
+            ]
     })
 
-    .then((data) => {
-        const answer = data;
+    .then(function (answer) {
 
-        if (answer === "View all departments") {
+        if (answer.questions === 'View all departments') {
             showDepartments();
-        }
-
-        if (answer === "View all roles") {
+        } else if (answer === "View all roles") {
             showRoles();
-        }
-
-        if (answer === "View all employees") {
-                showEmployees();
-        }
-
-        if (answer === "Exit") {
+        } else if (answer === "View all employees") {
+            showEmployees();
+        } else if (answer === "Exit") {
             connection.end();
         }
     })
-};
+}
 
 showDepartments = () => {
-    const sql = `SELECT department.id AS id, department.name AS department FROM department`;
-    connection.promise().query(sql, (err, rows) => {
+    // const sql = 'SELECT * FROM department';
+    connection.query("SELECT * FROM department", (err, rows) => {
         if (err) throw err;
             console.table(rows);
             runApp();
 });
+
+
+showRoles = () => {
+    connection.query(``, (err, rows) => {
+            if (err) throw err;
+            console.table(rows);
+            runApp();
+    });
 }
 
-// showRoles = () => {
-//     const sql = `SELECT role.id, role.title, department.name AS department
-//                 FROM role
-//                 INNER JOIN department ON role.department_id = department.id`;
-//             connection.promise().query(sql, (err, rows) => {
-//             if (err) throw err;
-//             console.table(rows);
-//             runApp();
-//     });
-// }
-
-// showEmployees = () => {
-//     const sql = `SELECT employee.id, 
-//         employee.first_name, 
-//         employee.last_name, 
-//         role.title, 
-//         department.name AS department,
-//         role.salary`;
-
-//         connection.promise().query(sql, (err, rows) => {
-//             if (err) throw err;
-//             console.table(rows);
-//             promptUser();
-//         });
-//     }
-// }
+showEmployees = () => {
+        connection.query(, (err, rows) => {
+            if (err) throw err;
+            console.table(rows);
+            promptUser();
+        });
+    }
+}
 
 runApp();
-
-module.exports = runApp
